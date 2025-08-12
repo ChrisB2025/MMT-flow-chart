@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MMT Debate Navigation Flowchart</title>
+<style>
+body {
+font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+margin: 0;
+padding: 20px;
+background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+min-height: 100vh;
+}
+
+```
+    .flowchart-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        padding: 30px;
+        position: relative;
+    }
+
+    .header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .header h1 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+        font-size: 2.2rem;
+        font-weight: 600;
+    }
+
+    .header p {
+        color: #7f8c8d;
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+    }
+
+    .legend {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        background: #f8f9fa;
+        border-radius: 20px;
+        font-size: 0.9rem;
+    }
+
+    .legend-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+
+    .flowchart {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    .gateway-section {
+        grid-column: span 4;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .gateway-section h2 {
+        color: #2c3e50;
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+
+    .gateway-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
+    .node {
+        background: white;
+        border: 2px solid;
+        border-radius: 12px;
+        padding: 15px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        min-height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .node:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+
+    .node.gateway {
+        border-color: #e74c3c;
+        color: #e74c3c;
+        font-weight: 600;
+        font-size: 1rem;
+    }
+
+    .node.rebuttal {
+        border-color: #27ae60;
+        color: #27ae60;
+        font-size: 0.9rem;
+    }
+
+    .node.counter {
+        border-color: #f39c12;
+        color: #f39c12;
+        font-size: 0.9rem;
+    }
+
+    .node.terminal {
+        border-color: #9b59b6;
+        color: #9b59b6;
+        font-size: 0.9rem;
+    }
+
+    .node.circular {
+        border-color: #34495e;
+        color: #34495e;
+        border-style: dashed;
+        font-size: 0.9rem;
+    }
+
+    .node.active {
+        background: #3498db;
+        color: white;
+        border-color: #3498db;
+    }
+
+    .details-panel {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 16px 64px rgba(0,0,0,0.2);
+        padding: 30px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+        z-index: 1000;
+        display: none;
+    }
+
+    .details-panel h3 {
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-size: 1.4rem;
+    }
+
+    .details-panel .rebuttal-text {
+        background: #e8f5e8;
+        border-left: 4px solid #27ae60;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 0 8px 8px 0;
+    }
+
+    .details-panel .strategy-tip {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 15px;
+        margin: 15px 0;
+        border-radius: 0 8px 8px 0;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #7f8c8d;
+    }
+
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 999;
+        display: none;
+    }
+
+    .flow-path {
+        margin: 20px 0;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 4px solid #3498db;
+    }
+
+    .flow-path h4 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+    }
+
+    .audience-selector {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+    }
+
+    .audience-btn {
+        padding: 8px 16px;
+        border: 2px solid #3498db;
+        background: white;
+        color: #3498db;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+
+    .audience-btn.active {
+        background: #3498db;
+        color: white;
+    }
+
+    .audience-btn:hover {
+        background: #3498db;
+        color: white;
+    }
+
+    @media (max-width: 768px) {
+        .flowchart {
+            grid-template-columns: 1fr;
+        }
+
+        .gateway-row {
+            grid-template-columns: 1fr;
+        }
+
+        .legend {
+            justify-content: flex-start;
+        }
+    }
+</style>
+
+```
+
+</head>
+<body>
+<div class="flowchart-container">
+<div class="header">
+<h1>MMT Debate Navigation Flowchart</h1>
+<p>Interactive guide to common arguments against Modern Monetary Theory and strategic responses</p>
+</div>
+
+```
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-dot" style="background: #e74c3c;"></div>
+            Gateway Arguments
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background: #27ae60;"></div>
+            MMT Rebuttals
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background: #f39c12;"></div>
+            Counter-Arguments
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background: #9b59b6;"></div>
+            Terminal Points
+        </div>
+        <div class="legend-item">
+            <div class="legend-dot" style="background: #34495e; border: 2px dashed #34495e; width: 8px; height: 8px;"></div>
+            Circular Loops
+        </div>
+    </div>
+
+    <div class="audience-selector">
+        <button class="audience-btn active" data-audience="all">All Audiences</button>
+        <button class="audience-btn" data-audience="academic">Academic</button>
+        <button class="audience-btn" data-audience="political">Political</button>
+        <button class="audience-btn" data-audience="public">Public</button>
+        <button class="audience-btn" data-audience="business">Business</button>
+    </div>
+
+    <div class="gateway-section">
+        <h2>Gateway Arguments - Choose your starting point</h2>
+    </div>
+
+    <div class="gateway-row">
+        <div class="node gateway" data-id="funding">
+            "How do we pay for it?"
+        </div>
+        <div class="node gateway" data-id="inflation">
+            "Won't this cause inflation?"
+        </div>
+        <div class="node gateway" data-id="debt">
+            "What about the debt?"
+        </div>
+        <div class="node gateway" data-id="printing">
+            "Isn't this just printing money?"
+        </div>
+    </div>
+
+    <div class="flow-path" id="flow-content">
+        <h4>Click on any argument above to see the debate pathway and strategic responses</h4>
+        <p>This flowchart maps the predictable patterns in MMT debates, helping you navigate conversations more effectively by understanding where arguments typically lead and how to respond strategically.</p>
+    </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+<div class="details-panel" id="details-panel">
+    <button class="close-btn" id="close-btn">&times;</button>
+    <div id="details-content"></div>
+</div>
+
+<script>
+    const debateData = {
+        funding: {
+            title: "How do we pay for it?",
+            type: "gateway",
+            rebuttal: "Monetarily sovereign governments like the UK don't 'find' money - they create it. The question isn't funding availability, but resource availability and inflation management.",
+            strategy: "Avoid accepting the premise that government needs to 'find' money. Redirect to resource constraints and productive capacity.",
+            pathway: [
+                {
+                    step: 1,
+                    argument: "Government needs to tax or borrow first",
+                    rebuttal: "Government spending creates money, then taxation/borrowing removes it. The Bank of England confirmed this in 2014.",
+                    likely_counter: "But what about bond markets and interest rates?"
+                },
+                {
+                    step: 2,
+                    argument: "Bond markets discipline government spending",
+                    rebuttal: "UK government can always meet sterling obligations. Bond yields reflect Bank of England policy, not market 'discipline'.",
+                    likely_counter: "This will cause inflation like in Zimbabwe/Venezuela"
+                },
+                {
+                    step: 3,
+                    argument: "This leads to hyperinflation",
+                    rebuttal: "Zimbabwe and Venezuela had supply collapses, not demand excess. UK has strong institutions and productive capacity.",
+                    terminal: "Usually terminates in debates about institutional quality or moves to political feasibility concerns"
+                }
+            ],
+            audiences: {
+                academic: "Focus on sectoral balance identities and Post-Keynesian literature",
+                political: "Emphasize fiscal space for public investment and job creation",
+                public: "Use 'government as scorekeeper' analogy, avoid technical details",
+                business: "Discuss how current QE already proves these operations work"
+            }
+        },
+        inflation: {
+            title: "Won't this cause inflation?",
+            type: "gateway",
+            rebuttal: "Inflation comes from resource constraints, not financial constraints. MMT proposes automatic stabilizers like the job guarantee to manage demand.",
+            strategy: "Distinguish between demand-pull and supply-push inflation. Emphasize real resource constraints over monetary mechanics.",
+            pathway: [
+                {
+                    step: 1,
+                    argument: "More money in circulation always causes inflation",
+                    rebuttal: "Japan shows high government spending can coexist with deflation. Inflation requires resource constraints or supply shocks.",
+                    likely_counter: "Japan is stagnating, proving MMT doesn't work"
+                },
+                {
+                    step: 2,
+                    argument: "Japan's stagnation proves MMT limitations",
+                    rebuttal: "Japan demonstrates fiscal space exists. Stagnation reflects demographic factors and insufficient stimulus, not MMT limits.",
+                    likely_counter: "But hyperinflation examples show money printing dangers"
+                },
+                {
+                    step: 3,
+                    argument: "Zimbabwe/Venezuela prove money printing causes hyperinflation",
+                    rebuttal: "Both had massive supply collapses. UK has stable institutions and productive capacity. Context matters.",
+                    terminal: "Often ends in institutional quality discussions or moves to expectation effects"
+                }
+            ],
+            circular_loop: "Inflation → Japan → Hyperinflation → Expectations → Political feasibility → Inflation",
+            audiences: {
+                academic: "Reference NAIRU critique and employment buffer stock mechanisms",
+                political: "Emphasize employment benefits and automatic stabilizers",
+                public: "Focus on job security and price stability through employment programs",
+                business: "Discuss predictable demand and reduced uncertainty"
+            }
+        },
+        debt: {
+            title: "What about the debt?",
+            type: "gateway",
+            rebuttal: "Government 'debt' is private sector wealth. For currency issuers, debt-to-GDP ratios don't indicate sustainability - resource constraints do.",
+            strategy: "Reframe 'national debt' as 'national savings.' Government deficits equal private surpluses by accounting identity.",
+            pathway: [
+                {
+                    step: 1,
+                    argument: "High debt burdens future generations",
+                    rebuttal: "Government debt is financial assets for private sector. Future generations inherit both 'debt' and the wealth it represents.",
+                    likely_counter: "Interest payments crowd out other spending"
+                },
+                {
+                    step: 2,
+                    argument: "Interest payments become unsustainable",
+                    rebuttal: "Government pays interest by creating money. Bank of England can set any interest rate it chooses.",
+                    likely_counter: "This ignores international constraints and currency effects"
+                },
+                {
+                    step: 3,
+                    argument: "Foreign holders and exchange rates create constraints",
+                    rebuttal: "UK debt is in sterling. Exchange rate effects depend on import dependency and terms of trade, not debt levels.",
+                    terminal: "Usually ends in discussions about import constraints or moves to political economy concerns"
+                }
+            ],
+            audiences: {
+                academic: "Use sectoral balance equations and stock-flow consistent modeling",
+                political: "Emphasize intergenerational wealth transfer and productive investment",
+                public: "Explain how government debt equals private savings",
+                business: "Focus on how government spending creates business income and demand"
+            }
+        },
+        printing: {
+            title: "Isn't this just printing money?",
+            type: "gateway",
+            rebuttal: "All money is 'printed' - banks create money when they lend. Government spending works the same way as bank lending, just with different purposes.",
+            strategy: "Normalize money creation as standard banking practice. Reference Bank of England's money creation paper.",
+            pathway: [
+                {
+                    step: 1,
+                    argument: "Printing money is inherently inflationary",
+                    rebuttal: "Banks create £2 trillion through lending. Government creates much less. The process is the same, purposes differ.",
+                    likely_counter: "But bank lending is backed by real economic activity"
+                },
+                {
+                    step: 2,
+                    argument: "Bank lending is productive, government spending isn't",
+                    rebuttal: "Government spending on infrastructure, education, and healthcare creates real value. Both processes create money for economic purposes.",
+                    likely_counter: "Markets allocate resources more efficiently than government"
+                },
+                {
+                    step: 3,
+                    argument: "Market allocation is more efficient than government",
+                    rebuttal: "Markets failed in 2008, required government bailouts. Public goods and infrastructure require government coordination.",
+                    terminal: "Usually terminates in ideological disagreements about market vs government roles"
+                }
+            ],
+            audiences: {
+                academic: "Reference endogenous money theory and banking operations",
+                political: "Compare to quantitative easing and bank bailouts",
+                public: "Use simple analogies about bank lending creating money",
+                business: "Emphasize how current system already works this way"
+            }
+        }
+    };
+
+    let currentAudience = 'all';
+
+    function showDetails(nodeId) {
+        const data = debateData[nodeId];
+        if (!data) return;
+
+        const content = document.getElementById('details-content');
+        const audienceStrategy = currentAudience !== 'all' ? data.audiences[currentAudience] : '';
+
+        content.innerHTML = `
+            <h3>${data.title}</h3>
+
+            <div class="rebuttal-text">
+                <strong>Core Rebuttal:</strong><br>
+                ${data.rebuttal}
+            </div>
+
+            <div class="strategy-tip">
+                <strong>Strategic Approach:</strong><br>
+                ${data.strategy}
+                ${audienceStrategy ? `<br><br><strong>${currentAudience.charAt(0).toUpperCase() + currentAudience.slice(1)} Focus:</strong> ${audienceStrategy}` : ''}
+            </div>
+
+            <h4>Typical Debate Pathway:</h4>
+            ${data.pathway.map((step, index) => `
+                <div style="margin: 15px 0; padding: 15px; background: ${index % 2 === 0 ? '#f8f9fa' : '#fff'}; border-radius: 8px;">
+                    <strong>Step ${step.step}: "${step.argument}"</strong><br>
+                    <em>MMT Response:</em> ${step.rebuttal}<br>
+                    ${step.likely_counter ? `<em>Likely Counter:</em> ${step.likely_counter}` : ''}
+                    ${step.terminal ? `<em>Terminal Point:</em> ${step.terminal}` : ''}
+                </div>
+            `).join('')}
+
+            ${data.circular_loop ? `
+                <div style="margin: 15px 0; padding: 15px; background: #fff3cd; border-radius: 8px; border-left: 4px solid #ffc107;">
+                    <strong>Circular Loop Pattern:</strong><br>
+                    ${data.circular_loop}
+                </div>
+            ` : ''}
+        `;
+
+        document.getElementById('overlay').style.display = 'block';
+        document.getElementById('details-panel').style.display = 'block';
+    }
+
+    function hideDetails() {
+        document.getElementById('overlay').style.display = 'none';
+        document.getElementById('details-panel').style.display = 'none';
+    }
+
+    function updateFlowContent(nodeId) {
+        const data = debateData[nodeId];
+        if (!data) return;
+
+        const flowContent = document.getElementById('flow-content');
+        flowContent.innerHTML = `
+            <h4>Debate Flow: ${data.title}</h4>
+            <p><strong>Opening Strategy:</strong> ${data.strategy}</p>
+            <div style="background: #e8f5e8; padding: 15px; border-radius: 8px; margin: 15px 0;">
+                <strong>Key Rebuttal:</strong> ${data.rebuttal}
+            </div>
+            <p><em>Click the argument node above for detailed pathway analysis and audience-specific strategies.</em></p>
+        `;
+    }
+
+    // Event listeners
+    document.querySelectorAll('.node').forEach(node => {
+        node.addEventListener('click', () => {
+            // Remove active class from all nodes
+            document.querySelectorAll('.node').forEach(n => n.classList.remove('active'));
+
+            // Add active class to clicked node
+            node.classList.add('active');
+
+            const nodeId = node.getAttribute('data-id');
+            updateFlowContent(nodeId);
+            showDetails(nodeId);
+        });
+    });
+
+    document.querySelectorAll('.audience-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.audience-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentAudience = btn.getAttribute('data-audience');
+        });
+    });
+
+    document.getElementById('close-btn').addEventListener('click', hideDetails);
+    document.getElementById('overlay').addEventListener('click', hideDetails);
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            hideDetails();
+        }
+    });
+</script>
+
+```
+
+</body>
+</html>
